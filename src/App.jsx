@@ -93,16 +93,16 @@ function App() {
 		console.log('input values', inputValues);
 	}
 
-	const saveTodo = () => {
+	const saveTodo = (task) => {
 		console.log('in save todo');
-		let action = inputValues.id ? urlMapping['update'] : urlMapping['add'];
-		let method = inputValues.id ? 'PUT' : 'POST';
+		let action = task.id ? urlMapping['update'] : urlMapping['add'];
+		let method = task.id ? 'PUT' : 'POST';
 		fetch('/api/'+action,{
 			method: method,
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(inputValues)
+			body: JSON.stringify(task)
 		}).then(response => response.json())
 		.then(data => {
 			console.log('Success:', data);
@@ -132,23 +132,9 @@ function App() {
 		setInputValues({...task});
 	}
 
-	// const handleComplete = (task) => {
-	// 	console.log('before update task', {...task});
-	// 	let completedTask = {...task, completed:true};
-	// 	setInputValues(completedTask);
-	// 	setTimeout(() => {
-	// 		saveTodo();
-	// 	}, 0);
-	// }
-
 	const handleComplete = (task) => {
-        const completedTask = { ...task, completed: true };
-        setInputValues(completedTask);
-        // Use a callback to ensure the state is updated before calling saveTodo
-        setTimeout(() => {
-            saveTodo();
-        }, 0);
-		console.log('end of handle complete')
+		task.completed = true
+        saveTodo(task);
     }
 
 
@@ -183,7 +169,7 @@ function App() {
 					<Button variant="secondary" onClick={closeModal}>
 						Close
 					</Button>
-					<Button variant="primary" onClick={saveTodo}>Save</Button>
+					<Button variant="primary" onClick={() => saveTodo(inputValues)}>Save</Button>
 				</Modal.Footer>
       		</Modal>
 
